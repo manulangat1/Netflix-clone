@@ -19,3 +19,10 @@ class PlayList(BaseModel):
 
     def __str__(self):
         return self.name
+class Category(BaseModel):
+    name = models.CharField(max_length=100)
+    desc = models.TextField()
+    movies = models.ManyToManyField(Movie)
+
+    def __str__(self):
+        return self.name
