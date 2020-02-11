@@ -59,7 +59,7 @@ from rest_framework import status
 from django.urls import reverse
     # return APIClient()
 class TestPlaylist(APITestCase):
-    def setUp(self):
+    # def setUp(self):
         
     @pytest.mark.django_db
     def test_can_get_playlist(self):
