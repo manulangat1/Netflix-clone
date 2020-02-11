@@ -8,5 +8,5 @@ urlpatterns = [
     path('play/',add_to_playlist),
     path('movie/',MovieAPI.as_view()),
     path('movie/create/',MovieCreateAPI.as_view()),
-    path('playlist/',PlayListAPI.as_view()),
+    path('playlist/',PlayListAPI.as_view(),name='playlist'),
 ]
