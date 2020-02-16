@@ -72,3 +72,53 @@ def add_to_playlist(request):
     playlist.append(movie)
     # print(playlist)
     return HttpResponse("cd")
+def save_youtube():
+    search_url = 'https://www.googleapis.com/youtube/v3/search'
+    video_url = 'https://www.googleapis.com/youtube/v3/videos'
+    search_params = {
+        "key":API_KEY,
+        'q':'flask',
+        'part':'snippet',
+        'maxResults':9,
+        'type':'video'
+    }
+    r = requests.get(search_url,params =search_params)
+    
+    results =r.json()['items']
+    video_ids = []
+    for result in results:
+        video_ids.append(result['id']['videoId'])
+    # print(video_ids)
+    video_params = {
+        "key":API_KEY,
+        'id':','.join(video_ids),
+        'part':'snippet,contentDetails',
+        'maxResults': 9
+    }
+    r1 = requests.get(video_url,params=video_params)
+    res1 =r1.json()['items']
+    videos = []
+    for res in res1:
+
+        video_data = {
+            'id': res['id'],
+            'url': f"https://www.youtube.com/watch?v={ res['id']}",
+            'thumbnail': res['snippet']['thumbnails']['high']['url'],
+            'duration':int(parse_duration(res['contentDetails']['duration']).total_seconds() //60),
+            'title':res['snippet']['title'],
+        }
+        try:
+            obj = Movie.objects.get(movie_id = res['id'])
+            print(obj)
+        except Movie.DoesNotExist:
+            print("not there")
+            obj = Movie.objects.create(
+                movie_id = res['id'],
+                movie_url = f"https://www.youtube.com/watch?v={ res['id']}",
+                movie_thumbnail = res['snippet']['thumbnails']['high']['url'],
+                movie_duration = int(parse_duration(res['contentDetails']['duration']).total_seconds() //60),
+                movie_title = res['snippet']['title'],
+            )
+            obj.save()
+        # print(video_data)
+        videos.append(video_data)
